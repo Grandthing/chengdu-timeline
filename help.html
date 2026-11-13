@@ -44,6 +44,8 @@ ul{padding-left:1.2em;margin:4px 0}
 .big{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:24px}
 .big p{font-size:clamp(2rem,9vw,4rem);font-weight:700;text-align:center;margin:0;word-break:break-all}
 .big button{padding:12px 28px;font-size:1rem}
+.py{display:block;font-size:.8rem;color:var(--accent);font-style:italic;line-height:1.3;margin:1px 0 2px;word-break:break-word}
+.big .bigpy{font-size:clamp(1rem,4.5vw,1.6rem);font-weight:500;color:var(--muted);text-align:center;margin:0;word-break:break-word}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -116,7 +118,8 @@ ul{padding-left:1.2em;margin:4px 0}
   <div data-zh="โรงแรม Jiufeng จิ่วจ้ายโกว|九峰假日酒店(九寨沟景区游客中心店)"></div>
 </div>
 </div>
-<div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
+<div class="big" id="big" hidden><p id="bigt"></p><p class="bigpy" id="bigpy"></p><button id="bigc" type="button">ปิด</button></div>
+<script src="pinyin-data.js"></script>
 <script>
 const PHRASES=[
  ['ช่วยเรียกแท็กซี่ให้หน่อย','可以帮我们叫一辆出租车吗？'],
@@ -130,8 +133,10 @@ big.addEventListener('click',()=>{big.hidden=true});
 function row(th,zh){
   const r=document.createElement('div');r.className='row';
   const t=document.createElement('div');t.className='t';
-  const s=document.createElement('small');s.textContent=th;const b=document.createElement('b');b.textContent=zh;t.append(s,b);
-  const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>{bigt.textContent=zh;big.hidden=false};
+  const s=document.createElement('small');s.textContent=th;const b=document.createElement('b');b.textContent=zh;t.append(s);
+  const py=(window.PY||{})[zh];if(py){const pe=document.createElement('span');pe.className='py';pe.textContent=py;t.append(pe)}
+  t.append(b);
+  const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>{bigt.textContent=zh;document.getElementById('bigpy').textContent=(window.PY||{})[zh]||'';big.hidden=false};
   const c=document.createElement('button');c.type='button';c.textContent='คัดลอก';
   c.onclick=()=>{
     const ok=()=>{c.textContent='คัดลอกแล้ว';c.classList.add('done');setTimeout(()=>{c.textContent='คัดลอก';c.classList.remove('done')},1500)};

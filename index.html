@@ -67,6 +67,8 @@ details{margin-top:6px;font-size:.88rem}summary{color:var(--accent);cursor:point
 .count{margin-top:5px;padding:5px 8px;border-radius:8px;background:var(--now);border:1px solid var(--nowline);font-size:.88rem;font-weight:700;line-height:1.35}
 .search{display:flex;gap:6px;margin-top:6px}.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
 .search button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
+.py{display:block;font-size:.8rem;color:var(--accent);font-style:italic;line-height:1.3;margin:1px 0 2px;word-break:break-word}
+.big .bigpy{font-size:clamp(1rem,4.5vw,1.6rem);font-weight:500;color:var(--muted);text-align:center;margin:0;word-break:break-word}
 .dayl{font-size:.75rem;color:var(--muted);display:block}
 .empty{color:var(--muted);padding:12px 0}
 .wcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 12px 10px;margin-bottom:8px}
@@ -89,11 +91,12 @@ footer{margin-top:20px;font-size:.78rem;color:var(--muted);text-align:center}
 <main id="main"></main>
 <footer id="ver"></footer>
 </div>
-<div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
+<div class="big" id="big" hidden><p id="bigt"></p><p class="bigpy" id="bigpy"></p><button id="bigc" type="button">ปิด</button></div>
 <button class="upd" id="upd" type="button" hidden>มีแผนเวอร์ชันใหม่ แตะเพื่อโหลด</button>
 <script src="trip-data.js"></script>
 <script src="trip-detail.js"></script>
 <script src="words-data.js"></script>
+<script src="pinyin-data.js"></script>
 <script>
 // เวลาจีน = UTC+8 เสมอ ไม่ขึ้นกับโซนเวลาของเครื่อง · ทดสอบด้วย ?now=2026-11-15T08:10
 const qs=new URLSearchParams(location.search).get('now');
@@ -123,14 +126,16 @@ function copy(btn,text,el){
   const fb=()=>{const g=getSelection(),r=document.createRange();r.selectNodeContents(el);g.removeAllRanges();g.addRange(r);try{if(document.execCommand('copy'))return ok()}catch(e){}btn.textContent='กดค้างเพื่อคัดลอก'};
   try{navigator.clipboard.writeText(text).then(ok,fb)}catch(e){fb()}
 }
-function show(zh){$('bigt').textContent=zh;$('big').hidden=false}
+function show(zh){$('bigt').textContent=zh;$('bigpy').textContent=(window.PY||{})[zh]||'';$('big').hidden=false}
 $('big').addEventListener('click',()=>{$('big').hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('big').hidden=true});
 $('banner').addEventListener('click',()=>$('banner').classList.toggle('open'));
 function zhRow(th,zh){
   const r=document.createElement('div');r.className='zh';
   const tt=document.createElement('div');tt.className='t';
-  const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm,bb);
+  const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm);
+  const py=(window.PY||{})[zh];if(py){const pe=document.createElement('span');pe.className='py';pe.textContent=py;tt.append(pe)}
+  tt.append(bb);
   const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>show(zh);
   const bt=document.createElement('button');bt.type='button';bt.textContent='คัดลอก';bt.onclick=()=>copy(bt,zh,bb);
   r.append(tt,sw,bt);return r;

@@ -13,6 +13,7 @@
 - `full.html` แผนฉบับเต็มทุกหัวข้อ (เช็กลิสต์ เงิน เบอร์ฉุกเฉิน ประโยคจีน)
 - `sw.js` service worker แบบ cache-first: เปิดจากเครื่องทันที แล้วโหลดของใหม่เบื้องหลัง (ในจีนเน็ตอาจค้าง ห้ามเปลี่ยนเป็น network-first)
 - `trip.ics` ปฏิทินเวลาสำคัญพร้อมเตือน สร้างจาก `trip-data.js` ด้วย `node tools/make-ics.js` (ต้องรันใหม่ทุกครั้งที่แก้แผน) ไฟล์ต้องเป็น CRLF จึงตั้ง binary ใน .gitattributes
+- `pinyin-data.js` (`window.PY`) pinyin ของคำจีนทุกคำ สร้างด้วย `tools/make-pinyin.js` (ต้องมี pinyin-pro ตอนสร้าง) รันใหม่ทุกครั้งที่เพิ่ม/แก้คำจีน · คำที่ library อ่านผิดแก้ใน `customPinyin` / `FIX` ของไฟล์นั้น
 - `manifest.webmanifest` + `icon-*.png` สำหรับเพิ่มไปยังหน้าจอโฮม
 - วันที่ 15 มีตัวเลือกรถ A/B (localStorage `prefs.car`) ซ่อนส่วนของ `how` ที่ขึ้นต้นด้วย "A:" / "B:" ของอีกแบบ (คั่นด้วย " · ")
 

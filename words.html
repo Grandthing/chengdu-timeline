@@ -22,6 +22,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .wrap{max-width:720px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1{font-size:1.35rem;margin:0 0 4px;text-wrap:balance}
 .note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin:0 0 8px;font-size:.92rem;white-space:pre-line}
+.py{display:block;font-size:.8rem;color:var(--accent);font-style:italic;line-height:1.3;margin:1px 0 2px;word-break:break-word}
+.big .bigpy{font-size:clamp(1rem,4.5vw,1.6rem);font-weight:500;color:var(--muted);text-align:center;margin:0;word-break:break-word}
 .sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding-block:8px;border-bottom:1px solid var(--line)}
 nav a.home{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
@@ -51,8 +53,9 @@ html{margin:0}body{margin:0}[hidden]{display:none!important}
 <nav id="nav"><a class="home" href="index.html">← แผนหลัก</a></nav>
 <div id="out"></div>
 </div>
-<div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
+<div class="big" id="big" hidden><p id="bigt"></p><p class="bigpy" id="bigpy"></p><button id="bigc" type="button">ปิด</button></div>
 <script src="words-data.js"></script>
+<script src="pinyin-data.js"></script>
 <script>
 const D=window.WORDS;
 const nav=document.getElementById('nav'),out=document.getElementById('out');
@@ -67,9 +70,10 @@ D.forEach(([t,id,rows,note])=>{
     const x=document.createElement('div');x.className='txt';
     const p1=document.createElement('div');p1.className='th';p1.textContent=th;
     const p2=document.createElement('div');p2.className='zh';p2.textContent=zh;
-    x.append(p1,p2);
+    const pp=document.createElement('div');pp.className='py';pp.textContent=(window.PY||{})[zh]||'';
+    x.append(p1);if(pp.textContent)x.append(pp);x.append(p2);
     const sh=document.createElement('button');sh.type='button';sh.className='show';sh.textContent='โชว์';
-    sh.addEventListener('click',()=>{document.getElementById('bigt').textContent=zh;document.getElementById('big').hidden=false});
+    sh.addEventListener('click',()=>{document.getElementById('bigt').textContent=zh;document.getElementById('bigpy').textContent=(window.PY||{})[zh]||'';document.getElementById('big').hidden=false});
     const b=document.createElement('button');b.type='button';b.textContent='คัดลอก';
     b.addEventListener('click',()=>{
       const ok=()=>{b.textContent='คัดลอกแล้ว';b.classList.add('done');setTimeout(()=>{b.textContent='คัดลอก';b.classList.remove('done')},1500)};
