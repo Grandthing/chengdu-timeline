@@ -175,7 +175,7 @@ function render(){
   const term=$('q').value.trim().toLowerCase();$('qx').hidden=!term;
   const tabs=$('tabs');tabs.textContent='';
   TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view&&!term)b.className='on';b.onclick=()=>{view=i;$('q').value='';render();scrollTo(0,0)};tabs.appendChild(b)});
-  [['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;tabs.appendChild(w)});
+  [['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],['https://th.trip.com/m/orders/all','การจอง Trip.com ↗'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;tabs.appendChild(w)});
   const main=$('main');main.textContent='';
   const sh=store.get('shift');
   if(term){
