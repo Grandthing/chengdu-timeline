@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b6b55">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ทริปเฉิงตู">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<title>ใบ ตม. ทริปเฉิงตู</title>
+<style>
+/* เอกสารส่วนตัว: เก็บในเครื่องนี้เท่านั้น (IndexedDB) ห้ามใส่ไฟล์จริงลง repo เพราะ repo เป็น public */
+:root{--bg:#f6f7f5;--card:#fff;--fg:#1c2421;--muted:#5d6b65;--line:#dde3df;--accent:#0b6b55;--accent-fg:#fff;--warnbg:#fde3e0;--warnfg:#8a1c12;--ok:#1d7a3a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--warnbg:#4a1d18;--warnfg:#ffb4aa;--ok:#6fd58c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--warnbg:#4a1d18;--warnfg:#ffb4aa;--ok:#6fd58c;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:"Sarabun",system-ui,-apple-system,"PingFang SC",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+a{color:var(--accent)}
+h1{font-size:1.35rem;margin:6px 0 4px}
+.sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.head{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.head input{flex:1;min-width:0;font:inherit;font-weight:700;font-size:1.05rem;border:1px solid transparent;border-radius:8px;padding:4px 6px;background:transparent;color:var(--fg)}
+.head input:focus{border-color:var(--line);outline:none}
+.thumb{display:block;width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:zoom-in}
+.empty{border:2px dashed var(--line);border-radius:10px;padding:22px 12px;text-align:center;color:var(--muted)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button,.pick{font:inherit;font-size:.9rem;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);padding:10px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.danger{background:transparent;color:var(--warnfg);border:1px solid var(--warnfg)}
+.pick input{display:none}
+.meta{font-size:.78rem;color:var(--muted);margin-top:6px}
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:.9rem;margin-bottom:12px}
+.warn{background:var(--warnbg);color:var(--warnfg);border-radius:10px;padding:10px 12px;font-size:.88rem;font-weight:600;margin-bottom:12px}
+.big{position:fixed;inset:0;background:#fff;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px))}
+.big img{max-width:100%;max-height:calc(100% - 64px);object-fit:contain}
+.big p{color:#333;font-size:.85rem;margin:8px 0 0;text-align:center}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="index.html">← กลับแผนหลัก</a>
+<h1>🛂 ใบ ตม. (ใบตอบรับกรอกข้อมูลขาเข้า)</h1>
+<p class="sub">โชว์เจ้าหน้าที่ตอนผ่าน ตม. สนามบินเทียนฝู่ คืนวันที่ 14 · แตะรูปเพื่อขยายเต็มจอ</p>
+<div class="warn">ไฟล์เก็บในมือถือเครื่องนี้เท่านั้น ไม่อัปโหลดขึ้นเว็บ เพราะมีชื่อและเลขพาสปอร์ต · ต้องเพิ่มไฟล์แยกในแต่ละเครื่อง</div>
+<div id="slots"></div>
+<div class="note">
+<b>วิธีใส่ไฟล์</b><br>
+1) ส่งรูป PNG ใบ ตม. เข้ามือถือ (AirDrop / LINE แชทตัวเอง) แล้วกด "บันทึกรูปภาพ" ลงคลังรูป<br>
+2) กด "เลือกรูป / ไฟล์" ด้านบน → คลังรูปภาพ → เลือกรูป · หรือเลือกไฟล์ PDF จากแอปไฟล์ก็ได้<br>
+3) ถ้าใช้แอปจากหน้าจอโฮม ต้องใส่ไฟล์ในแอปนั้น (เก็บแยกจาก Safari)<br>
+สำรองไว้ด้วย: เก็บรูปในคลังรูปภาพ หรือแคปหน้าจอไว้ เผื่อเว็บโหลดไม่ขึ้น
+</div>
+</div>
+<div class="big" id="big" hidden><img id="bigimg" alt="ใบ ตม. ขยายเต็มจอ"><p>เพิ่มความสว่างหน้าจอให้สุด · แตะเพื่อปิด</p></div>
+<script>
+const SLOTS=['p1','p2'], DEF={p1:'คนที่ 1',p2:'คนที่ 2'};
+const DB=new Promise((res,rej)=>{let r;try{r=indexedDB.open('trip-docs',1)}catch(e){return rej(e)}r.onupgradeneeded=()=>r.result.createObjectStore('docs');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const tx=(mode,fn)=>DB.then(db=>new Promise((res,rej)=>{const t=db.transaction('docs',mode);const out=fn(t.objectStore('docs'));t.oncomplete=()=>res(out&&out.result);t.onerror=()=>rej(t.error)}));
+const get=k=>tx('readonly',s=>s.get(k)), put=(k,v)=>tx('readwrite',s=>{s.put(v,k)}), del=k=>tx('readwrite',s=>{s.delete(k)});
+const labels=()=>{try{return JSON.parse(localStorage.getItem('docLabels')||'{}')}catch(e){return {}}};
+const urls={};
+const big=document.getElementById('big'),bigimg=document.getElementById('bigimg');
+big.onclick=()=>{big.hidden=true};
+function showBig(u){bigimg.src=u;big.hidden=false}
+async function draw(){
+  const box=document.getElementById('slots');box.textContent='';
+  for(const k of SLOTS){
+    const d=await get(k).catch(()=>null);
+    const c=document.createElement('div');c.className='card';
+    const h=document.createElement('div');h.className='head';
+    const inp=document.createElement('input');inp.value=labels()[k]||DEF[k];inp.setAttribute('aria-label','ชื่อเล่นของเอกสารนี้');
+    inp.onchange=()=>{const l=labels();l[k]=inp.value.trim()||DEF[k];try{localStorage.setItem('docLabels',JSON.stringify(l))}catch(e){}};
+    h.append('🛂',inp);c.appendChild(h);
+    if(urls[k]){URL.revokeObjectURL(urls[k]);delete urls[k]}
+    if(d&&d.buf){
+      const blob=new Blob([d.buf],{type:d.type});const u=URL.createObjectURL(blob);urls[k]=u;
+      if(d.type.startsWith('image/')){const im=document.createElement('img');im.className='thumb';im.src=u;im.alt='ใบ ตม. '+inp.value;im.onclick=()=>showBig(u);c.appendChild(im)}
+      else{const e=document.createElement('div');e.className='empty';e.textContent='📄 ไฟล์ PDF ('+Math.round(d.buf.byteLength/1024)+' KB) · กด "เปิด PDF" เพื่อดู';c.appendChild(e)}
+      const m=document.createElement('div');m.className='meta';m.textContent='บันทึกในเครื่องนี้เมื่อ '+new Date(d.saved).toLocaleString('th-TH');c.appendChild(m);
+    }else{const e=document.createElement('div');e.className='empty';e.textContent='ยังไม่มีไฟล์ในเครื่องนี้';c.appendChild(e)}
+    const b=document.createElement('div');b.className='btns';
+    if(d&&d.buf){
+      if(d.type.startsWith('image/')){const s=document.createElement('button');s.type='button';s.textContent='โชว์เต็มจอ';s.onclick=()=>showBig(urls[k]);b.appendChild(s)}
+      else{const a=document.createElement('a');a.className='pick';a.href=urls[k];a.target='_blank';a.rel='noopener';a.textContent='เปิด PDF';b.appendChild(a)}
+    }
+    const pk=document.createElement('label');pk.className='pick'+(d&&d.buf?' ghost':'');pk.textContent=d&&d.buf?'เปลี่ยนไฟล์':'เลือกรูป / ไฟล์';
+    const fi=document.createElement('input');fi.type='file';fi.accept='image/*,application/pdf';
+    fi.onchange=async()=>{const f=fi.files[0];if(!f)return;try{await put(k,{buf:await f.arrayBuffer(),type:f.type||'application/octet-stream',saved:Date.now()});try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}}catch(e){alert('บันทึกไม่ได้: '+e.message)}draw()};
+    pk.appendChild(fi);b.appendChild(pk);
+    if(d&&d.buf){const x=document.createElement('button');x.type='button';x.className='danger';x.textContent='ลบ';x.onclick=async()=>{if(confirm('ลบไฟล์ของ "'+inp.value+'" ออกจากเครื่องนี้?')){await del(k);draw()}};b.appendChild(x)}
+    c.appendChild(b);box.appendChild(c);
+  }
+}
+draw().catch(e=>{document.getElementById('slots').textContent='เครื่องนี้เก็บไฟล์ไม่ได้ ('+e.message+') ให้ใช้รูปในคลังรูปภาพแทน'});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+</body>
+</html>
