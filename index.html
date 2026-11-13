@@ -4,20 +4,33 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b6b55">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ทริปเฉิงตู">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
 <title>ไทม์ไลน์ทริปเฉิงตู</title>
 <style>
 :root{--bg:#f6f7f5;--card:#fff;--fg:#1c2421;--muted:#5d6b65;--line:#dde3df;--accent:#0b6b55;--accent-fg:#fff;--now:#fff4d6;--nowline:#d99a00;--ok:#1d7a3a;--warnbg:#fde3e0;--warnfg:#8a1c12}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--now:#3a3113;--nowline:#f0b93a;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--now:#3a3113;--nowline:#f0b93a;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Sarabun",system-ui,-apple-system,"PingFang SC",sans-serif;font-size:16px;line-height:1.45}
-.wrap{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line)}
-.clock{font-size:.85rem;color:var(--muted)}
-.next{font-weight:700;font-size:1.05rem;margin-top:2px}
-.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:8px}
-.tabs button,.tabs a{flex:none;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:6px 12px;font:inherit;font-size:.85rem;text-decoration:none}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:720px;margin:0 auto;padding:4px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:6px 0 6px;border-bottom:1px solid var(--line)}
+.clock{font-size:.8rem;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap}
+.net{font-weight:600}.net.off{color:var(--nowline)}
+.next{font-weight:700;font-size:1rem;margin-top:1px;line-height:1.35}
+.tabs{display:flex;gap:6px;overflow-x:auto;margin-top:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button,.tabs a{flex:none;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:5px 11px;font:inherit;font-size:.83rem;text-decoration:none}
 .tabs button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
-h2{font-size:1.05rem;margin:18px 0 8px}
+.tabs .sbtn.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+h2{font-size:1.05rem;margin:14px 0 8px}
 .item{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
 .item.past{opacity:.5}
 .item.now{background:var(--now);border-color:var(--nowline);border-width:2px}
@@ -30,14 +43,14 @@ h2{font-size:1.05rem;margin:18px 0 8px}
 .alert{margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--warnbg);color:var(--warnfg);font-size:.88rem;font-weight:600}
 details{margin-top:6px;font-size:.88rem}summary{color:var(--accent);cursor:pointer}details div{white-space:pre-wrap;color:var(--fg);margin-top:4px}
 .todo{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-top:12px}.todo label{display:flex;gap:8px;padding:5px 0;font-size:.92rem}.todo input{flex:none;width:20px;height:20px}
-.banner{margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--warnbg);color:var(--warnfg);font-size:.88rem;font-weight:600}
+.banner{margin-top:5px;padding:5px 8px;border-radius:8px;background:var(--warnbg);color:var(--warnfg);font-size:.85rem;font-weight:600;line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;cursor:pointer}
+.banner.open{-webkit-line-clamp:unset;display:block}
 .zh{display:flex;gap:8px;align-items:center;margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
 .zh .t{flex:1;min-width:0}
 .zh small{display:block;color:var(--muted);font-size:.75rem}
 .zh b{font-size:1.05rem;word-break:break-all;user-select:all;-webkit-user-select:all}
 .zh button{flex:none;font:inherit;font-size:.8rem;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);padding:8px 10px}
 .zh button.done{background:var(--ok)}
-
 .zh button.show{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .big{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:24px}
 .big p{font-size:clamp(2rem,9vw,4rem);font-weight:700;text-align:center;margin:0;word-break:break-all;color:var(--fg)}
@@ -46,52 +59,64 @@ details{margin-top:6px;font-size:.88rem}summary{color:var(--accent);cursor:point
 .chk{flex:none;display:flex;align-items:flex-start;padding-top:2px}.chk input{width:22px;height:22px;margin:0;accent-color:var(--accent)}
 .item.done .body>div:first-of-type{text-decoration:line-through}
 .shifted{font-size:.72rem;color:var(--nowline);font-weight:700;display:block}
-.fixed{font-size:.7rem;color:var(--muted);font-weight:400;display:block}
-.shiftbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
-.shiftbar button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
+.fixed,.thai{font-size:.7rem;color:var(--muted);font-weight:400;display:block}
+.shiftbar,.carbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
+.shiftbar button,.carbar button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
+.carbar button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
 .shiftbar b{color:var(--fg)}
-.count{margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--now);border:1px solid var(--nowline);font-size:.9rem;font-weight:700}
-.search{display:flex;gap:6px;margin-top:8px}.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+.count{margin-top:5px;padding:5px 8px;border-radius:8px;background:var(--now);border:1px solid var(--nowline);font-size:.88rem;font-weight:700;line-height:1.35}
+.search{display:flex;gap:6px;margin-top:6px}.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
 .search button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
 .dayl{font-size:.75rem;color:var(--muted);display:block}
 .empty{color:var(--muted);padding:12px 0}
+.wcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:4px 12px 10px;margin-bottom:8px}
+.cal{display:block;margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--accent);color:var(--accent-fg);text-decoration:none;font-weight:700;text-align:center}
+.calnote{font-size:.8rem;color:var(--muted);margin-top:4px}
+.upd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:15;border:0;border-radius:999px;background:var(--accent);color:var(--accent-fg);font:inherit;font-weight:700;padding:10px 18px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+footer{margin-top:20px;font-size:.78rem;color:var(--muted);text-align:center}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <div class="clock" id="clock"></div>
+  <div class="clock"><span id="clock"></span><span class="net" id="net"></span></div>
   <div class="next" id="status"></div>
   <div class="count" id="count" hidden></div>
-  <div class="banner" id="banner" hidden></div>
-  <div class="search"><input id="q" type="search" placeholder="ค้นหา ชื่อที่ ร้าน คำจีน ทุกวัน" aria-label="ค้นหา"><button id="qx" type="button" hidden>ล้าง</button></div>
+  <div class="banner" id="banner" hidden title="แตะเพื่ออ่านทั้งหมด"></div>
+  <div class="search" id="sbox" hidden><input id="q" type="search" placeholder="ค้นหา ที่เที่ยว ร้าน คำจีน ทุกวัน" aria-label="ค้นหา"><button id="qx" type="button">ปิด</button></div>
   <div class="tabs" id="tabs"></div>
 </header>
 <main id="main"></main>
+<footer id="ver"></footer>
 </div>
 <div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
+<button class="upd" id="upd" type="button" hidden>มีแผนเวอร์ชันใหม่ แตะเพื่อโหลด</button>
 <script src="trip-data.js"></script>
 <script src="trip-detail.js"></script>
+<script src="words-data.js"></script>
 <script>
 // เวลาจีน = UTC+8 เสมอ ไม่ขึ้นกับโซนเวลาของเครื่อง · ทดสอบด้วย ?now=2026-11-15T08:10
 const qs=new URLSearchParams(location.search).get('now');
 const fake=qs?Date.parse(qs+':00+08:00'):null;
 const nowMs=()=>fake??Date.now();
 const at=(d,t)=>Date.parse(d+'T'+t+':00+08:00');
-const MIN=60000;
+const MIN=60000, HOUR=3600e3;
 const FIXED=/🚄|✈️/; // รถไฟและเที่ยวบิน ห้ามเลื่อนเวลา
+const TRIP_URL='https://th.trip.com/m/orders/all';
+const CAR_DAY='2026-11-15'; // วันที่มีตัวเลือกรถ A / B
 const base=[];
 TRIP.forEach((day,di)=>day.items.forEach((it,i)=>{
   const s=at(day.date,it.t), nx=day.items[i+1];
-  const e=it.end?at(day.date,it.end):(nx?at(day.date,nx.t):s+3600e3);
+  const e=it.end?at(day.date,it.end):(nx?at(day.date,nx.t):s+HOUR);
   base.push({...it,di,i,s0:s,e0:e,k:day.date+'|'+it.t,fixed:FIXED.test(it.title)});
 }));
-let view=null;const openSet=new Set();
+let view=null, searchOpen=false;const openSet=new Set();
 const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
 const p2=n=>String(n).padStart(2,'0');
-function cnTime(ms){const d=new Date(ms+8*3600e3);return{date:d.getUTCFullYear()+'-'+p2(d.getUTCMonth()+1)+'-'+p2(d.getUTCDate()),hm:p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())}}
+function cnTime(ms){const d=new Date(ms+8*HOUR);return{date:d.getUTCFullYear()+'-'+p2(d.getUTCMonth()+1)+'-'+p2(d.getUTCDate()),hm:p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())}}
 const hm=ms=>cnTime(ms).hm;
+const thHm=ms=>cnTime(ms-HOUR).hm; // เวลาไทย = เวลาจีน − 1 ชม.
 const dur=m=>m>=60?Math.floor(m/60)+' ชม. '+(m%60)+' นาที':m+' นาที';
 function copy(btn,text,el){
   const ok=()=>{btn.textContent='คัดลอกแล้ว';btn.classList.add('done');setTimeout(()=>{btn.textContent='คัดลอก';btn.classList.remove('done')},1500)};
@@ -101,6 +126,22 @@ function copy(btn,text,el){
 function show(zh){$('bigt').textContent=zh;$('big').hidden=false}
 $('big').addEventListener('click',()=>{$('big').hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('big').hidden=true});
+$('banner').addEventListener('click',()=>$('banner').classList.toggle('open'));
+function zhRow(th,zh){
+  const r=document.createElement('div');r.className='zh';
+  const tt=document.createElement('div');tt.className='t';
+  const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm,bb);
+  const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>show(zh);
+  const bt=document.createElement('button');bt.type='button';bt.textContent='คัดลอก';bt.onclick=()=>copy(bt,zh,bb);
+  r.append(tt,sw,bt);return r;
+}
+
+// รถวันที่ 15: เลือก A หรือ B แล้วซ่อนคำอธิบายของอีกแบบ (ส่วนที่ขึ้นต้นด้วย "A:" / "B:")
+const car=()=>store.get('prefs').car||'';
+function howText(x){
+  const c=car();if(!c||TRIP[x.di].date!==CAR_DAY)return x.how||'';
+  return (x.how||'').split(' · ').filter(p=>!/^[AB]:/.test(p)||p.startsWith(c+':')).join(' · ');
+}
 
 // เวลาหลังเลื่อน: shift[di] = {m: นาที, from: เวลาเริ่มเดิม (ms) ของรายการแรกที่เลื่อน}
 function build(){
@@ -125,6 +166,7 @@ function shiftDay(di,delta){
   store.set('shift',sh);render();
 }
 function setDone(k,v){const dn=store.get('done');if(v)dn[k]=1;else delete dn[k];store.set('done',dn);render()}
+const showThai=di=>di===0||di===TRIP.length-1; // วันเดินทาง: โชว์เวลาไทยด้วย
 
 function card(x,ctx){
   const {cur,nxt,n,dayLabel}=ctx;
@@ -132,33 +174,48 @@ function card(x,ctx){
   const t=document.createElement('div');t.className='time';t.textContent=hm(x.s);
   if(x.off){const o=document.createElement('span');o.className='shifted';o.textContent='เดิม '+x.t;t.appendChild(o)}
   else if(x.fixed&&ctx.dayShifted){const o=document.createElement('span');o.className='fixed';o.textContent='ไม่เลื่อน';t.appendChild(o)}
+  if(showThai(x.di)){const o=document.createElement('span');o.className='thai';o.textContent='ไทย '+thHm(x.s);t.appendChild(o)}
   const b=document.createElement('div');b.className='body';
   if(dayLabel){const dl=document.createElement('span');dl.className='dayl';dl.textContent=TRIP[x.di].name;b.appendChild(dl)}
   const ti=document.createElement('div');ti.style.fontWeight='600';ti.textContent=x.title;
   if(x===cur||x===nxt){const bd=document.createElement('span');bd.className='badge';bd.textContent=x===cur?'ตอนนี้':'ถัดไป';ti.appendChild(bd)}
-  const how=document.createElement('div');how.className='how';how.textContent=x.how||'';
+  const how=document.createElement('div');how.className='how';how.textContent=howText(x);
   b.append(ti,how);
   if(x.alert){const a=document.createElement('div');a.className='alert';a.textContent='⚠️ '+x.alert;b.appendChild(a)}
   const dt=(window.DETAIL||{})[TRIP[x.di].date]?.[x.t];
-  if(dt){const de=document.createElement('details');de.open=openSet.has(x.k);de.ontoggle=()=>{de.open?openSet.add(x.k):openSet.delete(x.k)};const su=document.createElement('summary');su.textContent='รายละเอียดเต็มและแผนสำรอง';const dv=document.createElement('div');dv.textContent=dt;de.append(su,dv);b.appendChild(de)}
-  (x.zh||[]).forEach(([th,zh])=>{
-    const r=document.createElement('div');r.className='zh';
-    const tt=document.createElement('div');tt.className='t';
-    const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm,bb);
-    const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>show(zh);
-    const bt=document.createElement('button');bt.type='button';bt.textContent='คัดลอก';bt.onclick=()=>copy(bt,zh,bb);
-    r.append(tt,sw,bt);b.appendChild(r);
-  });
+  if(dt){const de=document.createElement('details');de.open=openSet.has(x.k)||!!ctx.openDetail;de.ontoggle=()=>{de.open?openSet.add(x.k):openSet.delete(x.k)};const su=document.createElement('summary');su.textContent='รายละเอียดเต็มและแผนสำรอง';const dv=document.createElement('div');dv.textContent=dt;de.append(su,dv);b.appendChild(de)}
+  (x.zh||[]).forEach(([th,zh])=>b.appendChild(zhRow(th,zh)));
   const ck=document.createElement('label');ck.className='chk';const ci=document.createElement('input');ci.type='checkbox';ci.checked=x.done;ci.setAttribute('aria-label','ทำแล้ว: '+x.title);ci.onchange=()=>setDone(x.k,ci.checked);ck.appendChild(ci);
   el.append(t,b,ck);
   return el;
+}
+
+function renderSearch(main,list,ctx,raw){
+  const term=raw.toLowerCase(), has=s=>String(s||'').toLowerCase().includes(term);
+  const hit=[];
+  list.forEach(x=>{
+    const dt=(window.DETAIL||{})[TRIP[x.di].date]?.[x.t]||'';
+    const main1=has(x.title)||has(x.how)||(x.zh||[]).some(([a,b])=>has(a)||has(b));
+    if(main1||has(dt))hit.push([x,!main1]);
+  });
+  const words=[];(window.WORDS||[]).forEach(([cat,,rows])=>rows.forEach(([th,zh])=>{if(has(th)||has(zh))words.push([cat,th,zh])}));
+  const h=document.createElement('h2');h.textContent='ผลค้นหา "'+raw+'" · ไทม์ไลน์ '+hit.length+' · คำจีน '+words.length;main.appendChild(h);
+  if(!hit.length&&!words.length){const e=document.createElement('div');e.className='empty';e.textContent='ไม่พบ ลองคำสั้นลง หรือดูหน้าคำจีนทั้งหมด';main.appendChild(e);return}
+  hit.forEach(([x,inDetail])=>main.appendChild(card(x,{...ctx,dayLabel:true,openDetail:inDetail})));
+  if(words.length){
+    const h2=document.createElement('h2');h2.textContent='คำจีน';main.appendChild(h2);
+    const wc=document.createElement('div');wc.className='wcard';
+    words.forEach(([cat,th,zh])=>wc.appendChild(zhRow(cat+' · '+th,zh)));
+    main.appendChild(wc);
+  }
 }
 
 function render(){
   const n=nowMs(), c=cnTime(n);
   const list=build(), live=list.filter(x=>!x.done).sort((a,b)=>a.s-b.s);
   const cur=live.find(x=>n>=x.s&&n<x.e), nxt=live.find(x=>x.s>n);
-  $('clock').textContent='เวลาจีนตอนนี้ '+c.hm+' ('+c.date+')'+(fake?' · โหมดทดสอบ':'');
+  $('clock').textContent='จีน '+c.hm+' · ไทย '+thHm(n)+' · '+c.date.slice(8)+'/'+c.date.slice(5,7)+(fake?' · โหมดทดสอบ':'');
+  const on=navigator.onLine;$('net').textContent=on?'· มีเน็ต':'· ออฟไลน์ (ใช้ข้อมูลในเครื่อง)';$('net').className='net'+(on?'':' off');
   const first=list[0];let st;
   if(n<first.s) st='ยังไม่เริ่มทริป · รายการแรก: '+first.title;
   else if(!nxt&&!cur) st='จบทริปแล้ว';
@@ -168,48 +225,66 @@ function render(){
   const cd=live.filter(x=>x.alert&&x.s>n&&x.s-n<=60*MIN)[0];
   $('count').hidden=!cd;
   if(cd){const m=Math.ceil((cd.s-n)/MIN);$('count').textContent='⏱ อีก '+dur(m)+' · '+hm(cd.s)+' '+cd.title}
-  const al=[cur,nxt].filter(x=>x&&x.alert).map(x=>'⚠️ '+x.alert).concat(conflicts(list,n).map(t=>'🚨 '+t));
-  $('banner').hidden=!al.length;$('banner').textContent=al.join(' · ');
+  const al=conflicts(list,n).map(t=>'🚨 '+t).concat([cur,nxt].filter(x=>x&&x.alert).map(x=>'⚠️ '+x.alert));
+  const bt=al.join(' · ');if($('banner').textContent!==bt)$('banner').classList.remove('open');
+  $('banner').hidden=!al.length;$('banner').textContent=bt;
   const today=TRIP.findIndex(d=>d.date===c.date);
   if(view===null) view=today>=0?today:(n<first.s?0:TRIP.length-1);
-  const term=$('q').value.trim().toLowerCase();$('qx').hidden=!term;
+  const raw=$('q').value.trim();
+  $('sbox').hidden=!searchOpen;
   const tabs=$('tabs');tabs.textContent='';
-  TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view&&!term)b.className='on';b.onclick=()=>{view=i;$('q').value='';render();scrollTo(0,0)};tabs.appendChild(b)});
-  [['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],['https://th.trip.com/m/orders/all','การจอง Trip.com ↗'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;tabs.appendChild(w)});
+  const sb=document.createElement('button');sb.type='button';sb.className='sbtn'+(searchOpen?' on':'');sb.textContent='🔍 ค้นหา';sb.setAttribute('aria-expanded',searchOpen);
+  sb.onclick=()=>{searchOpen=!searchOpen;if(!searchOpen)$('q').value='';render();if(searchOpen)$('q').focus()};tabs.appendChild(sb);
+  TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view&&!raw)b.className='on';b.onclick=()=>{view=i;searchOpen=false;$('q').value='';render();scrollTo(0,0)};tabs.appendChild(b)});
+  [['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],[TRIP_URL,'การจอง Trip.com ↗'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;if(h.startsWith('http'))w.rel='noopener';tabs.appendChild(w)});
   const main=$('main');main.textContent='';
   const sh=store.get('shift');
-  if(term){
-    const hit=list.filter(x=>[x.title,x.how||'',...(x.zh||[]).flat()].join(' ').toLowerCase().includes(term));
-    const h=document.createElement('h2');h.textContent='ผลค้นหา "'+$('q').value.trim()+'" '+hit.length+' รายการ';main.appendChild(h);
-    if(!hit.length){const e=document.createElement('div');e.className='empty';e.textContent='ไม่พบ ลองคำสั้นลง หรือดูหน้าคำจีนทั้งหมด';main.appendChild(e)}
-    hit.forEach(x=>main.appendChild(card(x,{cur,nxt,n,dayLabel:true,dayShifted:!!sh[x.di]})));
-    return;
-  }
+  if(raw&&searchOpen){renderSearch(main,list,{cur,nxt,n},raw);return}
   const h=document.createElement('h2');h.textContent=TRIP[view].name;main.appendChild(h);
   const dayItems=list.filter(x=>x.di===view);
+  if(TRIP[view].date===CAR_DAY){
+    const cb=document.createElement('div');cb.className='carbar';
+    const lab=document.createElement('span');lab.textContent='รถวันนี้:';cb.appendChild(lab);
+    [['','ดูทั้ง 2 แบบ'],['A','A จองแชร์รถ'],['B','B รถบัสหน้างาน']].forEach(([v,t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;if(car()===v)b.className='on';b.setAttribute('aria-pressed',car()===v);b.onclick=()=>{const p=store.get('prefs');p.car=v;store.set('prefs',p);render()};cb.appendChild(b)});
+    main.appendChild(cb);
+  }
   if(dayItems.some(x=>!x.fixed&&x.e0>n)||sh[view]){
     const bar=document.createElement('div');bar.className='shiftbar';
     const lab=document.createElement('span');const d=sh[view];
-    lab.innerHTML='';lab.append(d?'เลื่อนแล้ว ':'ช้า/เร็วกว่าแผน? ');
+    lab.append(d?'เลื่อนแล้ว ':'ช้า/เร็วกว่าแผน? ');
     if(d){const bb=document.createElement('b');bb.textContent=(d.m>0?'+':'')+d.m+' นาที';lab.append(bb,' (ตั้งแต่ '+hm(d.from)+' · รถไฟ/เครื่องบินไม่เลื่อน)')}
     const mk=(txt,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=txt;b.onclick=fn;return b};
     bar.append(mk('ช้ากว่าแผน +15 นาที',()=>shiftDay(view,15)),mk('−15 นาที',()=>shiftDay(view,-15)));
     if(d)bar.append(mk('รีเซ็ต',()=>shiftDay(view,0)));
     bar.append(lab);main.appendChild(bar);
   }
-  if(view===0&&window.TODO){const bx=document.createElement('div');bx.className='todo';const hh=document.createElement('div');hh.style.fontWeight='700';hh.textContent='ต้องทำก่อนขึ้นเครื่อง';bx.appendChild(hh);const st0=store.get('todo');TODO.forEach((t,i)=>{const l=document.createElement('label');const c=document.createElement('input');c.type='checkbox';c.id='todo'+i;c.checked=!!st0[i];c.onchange=()=>{const s1=store.get('todo');s1[i]=c.checked;store.set('todo',s1)};const sp=document.createElement('span');sp.textContent=t;l.append(c,sp);bx.appendChild(l)});main.appendChild(bx)}
+  if(view===0&&window.TODO){
+    const bx=document.createElement('div');bx.className='todo';const hh=document.createElement('div');hh.style.fontWeight='700';hh.textContent='ต้องทำก่อนขึ้นเครื่อง';bx.appendChild(hh);
+    const st0=store.get('todo');TODO.forEach((t,i)=>{const l=document.createElement('label');const c=document.createElement('input');c.type='checkbox';c.id='todo'+i;c.checked=!!st0[i];c.onchange=()=>{const s1=store.get('todo');s1[i]=c.checked;store.set('todo',s1)};const sp=document.createElement('span');sp.textContent=t;l.append(c,sp);bx.appendChild(l)});
+    const cal=document.createElement('a');cal.className='cal';cal.href='trip.ics';cal.textContent='📅 เพิ่มเวลาสำคัญลงปฏิทิน iPhone (มีเสียงเตือน)';
+    const cn=document.createElement('div');cn.className='calnote';cn.textContent='รถไฟ เครื่องบิน เวลาตื่น และรายการที่มีคำเตือน · เตือนล่วงหน้า 60/20 นาทีก่อนรถไฟ · ทำทีละเครื่อง · ถ้ากดเลื่อนเวลาในเว็บ ปฏิทินจะไม่เลื่อนตาม';
+    bx.append(cal,cn);main.appendChild(bx);
+  }
   dayItems.forEach(x=>{
     const el=card(x,{cur,nxt,n,dayShifted:!!sh[view]});main.appendChild(el);
     if(x===cur||(!cur&&x===nxt)) el.id='focus';
   });
 }
-$('q').addEventListener('input',render);
-$('qx').addEventListener('click',()=>{$('q').value='';render();$('q').focus()});
+$('q').addEventListener('input',()=>{render();scrollTo(0,0)});
+$('qx').addEventListener('click',()=>{$('q').value='';searchOpen=false;render()});
+$('ver').textContent='แผนเวอร์ชัน '+(window.SITE_VERSION||'?');
 render();
 const f=document.getElementById('focus');if(f)f.scrollIntoView({block:'center'});
 setInterval(render,15000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+addEventListener('online',render);addEventListener('offline',render);
+if('serviceWorker' in navigator){
+  const had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.register('sw.js').then(r=>r.update()).catch(()=>{});
+  // มี service worker เวอร์ชันใหม่มาแทน = มีแผนใหม่ในเครื่องแล้ว
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(had)$('upd').hidden=false});
+  $('upd').onclick=()=>location.reload();
+}
 </script>
 </body>
 </html>
