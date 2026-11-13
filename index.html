@@ -29,6 +29,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var
 .tabs::-webkit-scrollbar{display:none}
 .tabs button,.tabs a{flex:none;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:5px 11px;font:inherit;font-size:.83rem;text-decoration:none}
 .tabs button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.tabs a.wordsbtn{border-color:var(--accent);color:var(--accent);font-weight:600}
 .tabs .sbtn.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
 h2{font-size:1.05rem;margin:14px 0 8px}
 .item{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
@@ -240,8 +241,9 @@ function render(){
   const tabs=$('tabs');tabs.textContent='';
   const sb=document.createElement('button');sb.type='button';sb.className='sbtn'+(searchOpen?' on':'');sb.textContent='🔍 ค้นหา';sb.setAttribute('aria-expanded',searchOpen);
   sb.onclick=()=>{searchOpen=!searchOpen;if(!searchOpen)$('q').value='';render();if(searchOpen)$('q').focus()};tabs.appendChild(sb);
+  {const w=document.createElement('a');w.href='words.html';w.className='wordsbtn';w.textContent='คำจีนทั้งหมด';tabs.appendChild(w)}
   TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view&&!raw)b.className='on';b.onclick=()=>{view=i;searchOpen=false;$('q').value='';render();scrollTo(0,0)};tabs.appendChild(b)});
-  [['docs.html','🛂 ใบ ตม.'],['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],[TRIP_URL,'การจอง Trip.com ↗'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;if(h.startsWith('http'))w.rel='noopener';tabs.appendChild(w)});
+  [['docs.html','🛂 ใบ ตม.'],['help.html','🆘 ฉุกเฉิน'],[TRIP_URL,'การจอง Trip.com ↗'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;if(h.startsWith('http'))w.rel='noopener';tabs.appendChild(w)});
   const main=$('main');main.textContent='';
   const sh=store.get('shift');
   if(raw&&searchOpen){renderSearch(main,list,{cur,nxt,n},raw);return}

@@ -1,5 +1,5 @@
 // แก้ไฟล์ใดก็ตาม: เพิ่มเลขเวอร์ชันตรงนี้ และใน trip-data.js (window.SITE_VERSION) ให้ตรงกัน
-const C='chengdu-words-v14';
+const C='chengdu-words-v15';
 const FILES=['./','index.html','words.html','full.html','help.html','docs.html','trip-data.js','trip-detail.js','words-data.js','pinyin-data.js','trip.ics','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(FILES.map(f=>new Request(f,{cache:'reload'})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

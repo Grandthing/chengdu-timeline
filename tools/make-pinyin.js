@@ -5,7 +5,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm');
 const {pinyin,customPinyin}=require(process.env.PINYIN_PRO||'pinyin-pro');
 // คำที่ library อ่านผิด (ตรวจด้วยคนแล้ว)
-customPinyin({'藏餐吧':'zàng cān bā','毛肚':'máo dǔ','担担面':'dàn dàn miàn','饺子':'jiǎo zi'});
+customPinyin({'藏餐吧':'zàng cān bā','毛肚':'máo dǔ','担担面':'dàn dàn miàn','饺子':'jiǎo zi','肚子':'dù zi'});
 const root=path.join(__dirname,'..');
 const load=f=>{const c={window:{}};vm.createContext(c);vm.runInContext(fs.readFileSync(path.join(root,f),'utf8'),c);return c.window};
 const set=new Set();
