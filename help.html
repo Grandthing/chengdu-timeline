@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ฉุกเฉินทริปเฉิงตู</title>
+<style>
+/* ข้อมูลทุกบรรทัดในหน้านี้มาจาก full.html และ trip-detail.js เท่านั้น */
+:root{--bg:#f6f7f5;--card:#fff;--fg:#1c2421;--muted:#5d6b65;--line:#dde3df;--accent:#0b6b55;--accent-fg:#fff;--ok:#1d7a3a;--warnbg:#fde3e0;--warnfg:#8a1c12;--sos:#b3261e;--sos-fg:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;--sos:#ff8a80;--sos-fg:#2b0603;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;--sos:#ff8a80;--sos-fg:#2b0603;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--fg);font-family:"Sarabun",system-ui,-apple-system,"PingFang SC",sans-serif;font-size:16px;line-height:1.5}
+.wrap{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
+a{color:var(--accent)}
+h1{font-size:1.35rem;margin:6px 0 4px}
+h2{font-size:1.05rem;margin:22px 0 8px}
+.sub{color:var(--muted);font-size:.9rem;margin:0}
+.calls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.calls a{display:flex;flex-direction:column;align-items:center;justify-content:center;text-decoration:none;background:var(--sos);color:var(--sos-fg);border-radius:12px;padding:12px 4px;font-weight:700}
+.calls a b{font-size:1.8rem;line-height:1.1}
+.calls a span{font-size:.85rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.warn{background:var(--warnbg);color:var(--warnfg);border-color:transparent;font-weight:600}
+.card h3{font-size:1rem;margin:0 0 4px}
+.card p{margin:4px 0}
+.muted{color:var(--muted);font-size:.88rem}
+.row{display:flex;gap:8px;align-items:center;margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
+.row .t{flex:1;min-width:0}
+.row small{display:block;color:var(--muted);font-size:.78rem}
+.row b{font-size:1.1rem;word-break:break-all;user-select:all;-webkit-user-select:all}
+button{flex:none;font:inherit;font-size:.82rem;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);padding:8px 10px;cursor:pointer}
+button.show{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+button.done{background:var(--ok)}
+ul{padding-left:1.2em;margin:4px 0}
+.big{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:24px}
+.big p{font-size:clamp(2rem,9vw,4rem);font-weight:700;text-align:center;margin:0;word-break:break-all}
+.big button{padding:12px 28px;font-size:1rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<a href="index.html">← กลับหน้าไทม์ไลน์</a>
+<h1>🆘 ฉุกเฉิน</h1>
+<p class="sub">กดเบอร์เพื่อโทรได้ทันที · กด "โชว์" เพื่อขยายคำจีนให้คนจีนดู</p>
+
+<h2>เบอร์ฉุกเฉินในจีน</h2>
+<div class="calls">
+  <a href="tel:110"><b>110</b><span>ตำรวจ</span></a>
+  <a href="tel:120"><b>120</b><span>รถพยาบาล</span></a>
+  <a href="tel:119"><b>119</b><span>ดับเพลิง</span></a>
+</div>
+<div class="card" style="margin-top:8px"><p>เรื่องตั๋วหรือโรงแรม → แชทฝ่ายบริการลูกค้าในแอป Trip.com (เมนู ช่วยเหลือ)</p></div>
+
+<h2>ประโยคจีนขอความช่วยเหลือ</h2>
+<div class="card" id="phrases"></div>
+
+<h2>แพ้ความสูง (หวงหลง 3,100–3,600 ม. · จิ่วจ้ายโกว)</h2>
+<div class="card warn"><p>ปวดหัวรุนแรง อาเจียน หรือหายใจไม่ออก → ลงที่ต่ำทันที</p></div>
+<div class="card">
+  <ul>
+    <li>เดินช้าๆ ดื่มน้ำเยอะ</li>
+    <li>ซื้อออกซิเจนกระป๋องที่หน้าอุทยานหวงหลง</li>
+    <li>ทางเงามีน้ำแข็ง จับราว · เหนื่อยมากตอนขาลง ถามที่สถานีกระเช้าว่าซื้อกระเช้าลงได้ไหม</li>
+  </ul>
+  <div data-zh="ฉันแพ้ความสูงนิดหน่อย|我有点高原反应"></div>
+  <div data-zh="ออกซิเจนกระป๋อง|氧气瓶"></div>
+  <div data-zh="ซื้อกระเช้าลงได้ไหม|可以买下山索道票吗？"></div>
+</div>
+
+<h2>พลาดรถไฟ / ไม่ทันเวลา</h2>
+<div class="card">
+  <h3>อา. 15 · 🚄 C5746 เฉิงตูตะวันออก 06:14 (ประตูปิด 06:09)</h3>
+  <p>Didi ไม่มาถึง 05:05 → กดยกเลิกแล้วเรียกใหม่ทันที หรือให้ฟรอนต์เรียกแท็กซี่ (รถไฟใต้ดินยังไม่วิ่งตอนนั้น)</p>
+  <div data-zh="ให้ฟรอนต์เรียกแท็กซี่ด่วน|帮我们叫一辆出租车去成都东站，很急！"></div>
+  <p>พลาดรถไฟ → เคาน์เตอร์ในสถานี ขอเปลี่ยนเป็น <b>C5783 06:45</b></p>
+  <div data-zh="พลาดรถไฟ ขอเปลี่ยนขบวน|我要改签"></div>
+</div>
+<div class="card">
+  <h3>จ. 16 · 🚄 C5758 หวงหลงจิ่วจ้าย 20:33</h3>
+  <p>ต้องออกจากปากทางจิ่วจ้ายโกวไม่เกิน 17:30 · ถึงสถานีเร็ว ลองเปลี่ยนเป็นรอบก่อนใน Trip.com ได้</p>
+  <div data-zh="ให้โรงแรมเรียกรถไปสถานี 5 โมงเย็น|可以帮我们约一辆车，下午五点去黄龙九寨站吗？"></div>
+  <p class="muted">แผนไม่ได้ระบุขบวนสำรองถ้าพลาด → ไปเคาน์เตอร์ในสถานี พูดขอเปลี่ยนขบวน</p>
+  <div data-zh="พลาดรถไฟ ขอเปลี่ยนขบวน|我要改签"></div>
+</div>
+<div class="card">
+  <h3>อ. 17 · 🚄 S5003 ซีผู่ 07:37</h3>
+  <p>ต้องออกจากโรงแรมไม่เกิน 06:30 · สำรองไปสถานี: รถไฟใต้ดินสาย 2 จาก 春熙路 ฝั่ง 犀浦 จนสุดสาย ประมาณ 50 นาที ต้องขึ้นขบวนไม่เกิน 06:20 แล้วเดินตามป้าย 火车站</p>
+  <div data-zh="สถานีซีผู่|犀浦站"></div>
+  <p class="muted">แผนไม่ได้ระบุขบวนสำรองถ้าพลาด → ไปเคาน์เตอร์ในสถานี พูดขอเปลี่ยนขบวน</p>
+  <div data-zh="พลาดรถไฟ ขอเปลี่ยนขบวน|我要改签"></div>
+</div>
+<div class="card">
+  <h3>อ. 17 · 🚄 S5090 ตูเจียงเยี่ยน 21:17</h3>
+  <p>ต้องถึงสถานีไม่เกิน 21:00 · พลาด → สำรอง <b>S5062 21:33</b> · ยังไม่ได้ซื้อตั๋ว ซื้อที่เคาน์เตอร์ 售票处 ยื่นพาสปอร์ต 2 เล่ม</p>
+  <div data-zh="ตั๋วไปซีผู่ 2 ใบ รอบ 21:17|两张到犀浦，九点十七的"></div>
+</div>
+<div class="card">
+  <h3>พฤ. 19 · ✈️ FD563 เทียนฝู่ T1 02:50</h3>
+  <p>ออกจากโรงแรมไม่เกิน 22:00 · เคาน์เตอร์ AirAsia ปิด 01:50 (60 นาทีก่อนบิน)</p>
+  <div data-zh="Didi ไปสนามบิน|天府机场T1"></div>
+</div>
+
+<h2>ที่อยู่โรงแรม (โชว์คนขับ)</h2>
+<div class="card">
+  <div data-zh="โรงแรม Yeste เฉิงตู|红星路三段8号"></div>
+  <div data-zh="โรงแรม Jiufeng จิ่วจ้ายโกว|九峰假日酒店(九寨沟景区游客中心店)"></div>
+</div>
+</div>
+<div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
+<script>
+const PHRASES=[
+ ['ช่วยเรียกแท็กซี่ให้หน่อย','可以帮我们叫一辆出租车吗？'],
+ ['ฉันแพ้ความสูงนิดหน่อย','我有点高原反应'],
+ ['พลาดรถไฟ ขอเปลี่ยนขบวน','我要改签'],
+ ['ห้องน้ำอยู่ไหน','洗手间在哪里？'],
+ ['ผมอยู่หน้าประตู (ตอบคนขับ Didi)','我在门口']
+];
+const big=document.getElementById('big'),bigt=document.getElementById('bigt');
+big.addEventListener('click',()=>{big.hidden=true});
+function row(th,zh){
+  const r=document.createElement('div');r.className='row';
+  const t=document.createElement('div');t.className='t';
+  const s=document.createElement('small');s.textContent=th;const b=document.createElement('b');b.textContent=zh;t.append(s,b);
+  const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>{bigt.textContent=zh;big.hidden=false};
+  const c=document.createElement('button');c.type='button';c.textContent='คัดลอก';
+  c.onclick=()=>{
+    const ok=()=>{c.textContent='คัดลอกแล้ว';c.classList.add('done');setTimeout(()=>{c.textContent='คัดลอก';c.classList.remove('done')},1500)};
+    const fb=()=>{const g=getSelection(),rg=document.createRange();rg.selectNodeContents(b);g.removeAllRanges();g.addRange(rg);try{if(document.execCommand('copy'))return ok()}catch(e){}c.textContent='กดค้างเพื่อคัดลอก'};
+    try{navigator.clipboard.writeText(zh).then(ok,fb)}catch(e){fb()}
+  };
+  r.append(t,sw,c);return r;
+}
+const ph=document.getElementById('phrases');PHRASES.forEach(([th,zh],i)=>{const r=row(th,zh);if(!i)r.style.borderTop='0';ph.appendChild(r)});
+document.querySelectorAll('[data-zh]').forEach(el=>{const [th,zh]=el.dataset.zh.split('|');el.replaceWith(row(th,zh))});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+</body>
+</html>

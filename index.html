@@ -7,7 +7,7 @@
 <title>ไทม์ไลน์ทริปเฉิงตู</title>
 <style>
 :root{--bg:#f6f7f5;--card:#fff;--fg:#1c2421;--muted:#5d6b65;--line:#dde3df;--accent:#0b6b55;--accent-fg:#fff;--now:#fff4d6;--nowline:#d99a00;--ok:#1d7a3a;--warnbg:#fde3e0;--warnfg:#8a1c12}
-@media (prefers-color-scheme:dark){:root{--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--now:#3a3113;--nowline:#f0b93a;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121715;--card:#1b2320;--fg:#e8eeeb;--muted:#9fb0a8;--line:#2c3833;--accent:#4fc7a8;--accent-fg:#06231b;--now:#3a3113;--nowline:#f0b93a;--ok:#6fd58c;--warnbg:#4a1d18;--warnfg:#ffb4aa;color-scheme:dark}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:"Sarabun",system-ui,-apple-system,"PingFang SC",sans-serif;font-size:16px;line-height:1.45}
 .wrap{max-width:720px;margin:0 auto;padding:12px max(16px,env(safe-area-inset-right,0px)) 48px max(16px,env(safe-area-inset-left,0px))}
@@ -37,6 +37,24 @@ details{margin-top:6px;font-size:.88rem}summary{color:var(--accent);cursor:point
 .zh b{font-size:1.05rem;word-break:break-all;user-select:all;-webkit-user-select:all}
 .zh button{flex:none;font:inherit;font-size:.8rem;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);padding:8px 10px}
 .zh button.done{background:var(--ok)}
+
+.zh button.show{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.big{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;padding:24px}
+.big p{font-size:clamp(2rem,9vw,4rem);font-weight:700;text-align:center;margin:0;word-break:break-all;color:var(--fg)}
+.big button{font:inherit;border:0;border-radius:8px;background:var(--accent);color:var(--accent-fg);padding:12px 28px}
+[hidden]{display:none!important}
+.chk{flex:none;display:flex;align-items:flex-start;padding-top:2px}.chk input{width:22px;height:22px;margin:0;accent-color:var(--accent)}
+.item.done .body>div:first-of-type{text-decoration:line-through}
+.shifted{font-size:.72rem;color:var(--nowline);font-weight:700;display:block}
+.fixed{font-size:.7rem;color:var(--muted);font-weight:400;display:block}
+.shiftbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px;font-size:.85rem;color:var(--muted)}
+.shiftbar button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
+.shiftbar b{color:var(--fg)}
+.count{margin-top:6px;padding:6px 8px;border-radius:8px;background:var(--now);border:1px solid var(--nowline);font-size:.9rem;font-weight:700}
+.search{display:flex;gap:6px;margin-top:8px}.search input{flex:1;min-width:0;font:inherit;font-size:16px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg)}
+.search button{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:8px;padding:6px 10px}
+.dayl{font-size:.75rem;color:var(--muted);display:block}
+.empty{color:var(--muted);padding:12px 0}
 </style>
 </head>
 <body>
@@ -44,78 +62,152 @@ details{margin-top:6px;font-size:.88rem}summary{color:var(--accent);cursor:point
 <header>
   <div class="clock" id="clock"></div>
   <div class="next" id="status"></div>
+  <div class="count" id="count" hidden></div>
   <div class="banner" id="banner" hidden></div>
+  <div class="search"><input id="q" type="search" placeholder="ค้นหา ชื่อที่ ร้าน คำจีน ทุกวัน" aria-label="ค้นหา"><button id="qx" type="button" hidden>ล้าง</button></div>
   <div class="tabs" id="tabs"></div>
 </header>
 <main id="main"></main>
 </div>
+<div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
 <script src="trip-data.js"></script>
 <script src="trip-detail.js"></script>
 <script>
 // เวลาจีน = UTC+8 เสมอ ไม่ขึ้นกับโซนเวลาของเครื่อง · ทดสอบด้วย ?now=2026-11-15T08:10
-const q=new URLSearchParams(location.search).get('now');
-const fake=q?Date.parse(q+':00+08:00'):null;
+const qs=new URLSearchParams(location.search).get('now');
+const fake=qs?Date.parse(qs+':00+08:00'):null;
 const nowMs=()=>fake??Date.now();
 const at=(d,t)=>Date.parse(d+'T'+t+':00+08:00');
-const all=[];
+const MIN=60000;
+const FIXED=/🚄|✈️/; // รถไฟและเที่ยวบิน ห้ามเลื่อนเวลา
+const base=[];
 TRIP.forEach((day,di)=>day.items.forEach((it,i)=>{
   const s=at(day.date,it.t), nx=day.items[i+1];
   const e=it.end?at(day.date,it.end):(nx?at(day.date,nx.t):s+3600e3);
-  all.push({...it,di,s,e});
+  base.push({...it,di,i,s0:s,e0:e,k:day.date+'|'+it.t,fixed:FIXED.test(it.title)});
 }));
 let view=null;const openSet=new Set();
-const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'{}')}catch(e){return {}}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const store={get(k){try{return JSON.parse(localStorage.getItem(k)||'{}')||{}}catch(e){return {}}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
-function cnTime(ms){const d=new Date(ms+8*3600e3);const p=n=>String(n).padStart(2,'0');return{date:d.getUTCFullYear()+'-'+p(d.getUTCMonth()+1)+'-'+p(d.getUTCDate()),hm:p(d.getUTCHours())+':'+p(d.getUTCMinutes())}}
+const p2=n=>String(n).padStart(2,'0');
+function cnTime(ms){const d=new Date(ms+8*3600e3);return{date:d.getUTCFullYear()+'-'+p2(d.getUTCMonth()+1)+'-'+p2(d.getUTCDate()),hm:p2(d.getUTCHours())+':'+p2(d.getUTCMinutes())}}
+const hm=ms=>cnTime(ms).hm;
+const dur=m=>m>=60?Math.floor(m/60)+' ชม. '+(m%60)+' นาที':m+' นาที';
 function copy(btn,text,el){
   const ok=()=>{btn.textContent='คัดลอกแล้ว';btn.classList.add('done');setTimeout(()=>{btn.textContent='คัดลอก';btn.classList.remove('done')},1500)};
   const fb=()=>{const g=getSelection(),r=document.createRange();r.selectNodeContents(el);g.removeAllRanges();g.addRange(r);try{if(document.execCommand('copy'))return ok()}catch(e){}btn.textContent='กดค้างเพื่อคัดลอก'};
   try{navigator.clipboard.writeText(text).then(ok,fb)}catch(e){fb()}
 }
+function show(zh){$('bigt').textContent=zh;$('big').hidden=false}
+$('big').addEventListener('click',()=>{$('big').hidden=true});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('big').hidden=true});
+
+// เวลาหลังเลื่อน: shift[di] = {m: นาที, from: เวลาเริ่มเดิม (ms) ของรายการแรกที่เลื่อน}
+function build(){
+  const sh=store.get('shift'),dn=store.get('done');
+  return base.map(x=>{const d=sh[x.di];const off=(d&&d.m&&!x.fixed&&x.s0>=d.from)?d.m*MIN:0;return{...x,s:x.s0+off,e:x.e0+off,off,done:!!dn[x.k]}});
+}
+function conflicts(list,n){
+  const out=[];
+  list.filter(f=>f.fixed&&f.e>n).forEach(f=>{
+    const bad=list.filter(x=>x.di===f.di&&x.i<f.i&&x.off>0&&!x.done&&x.e>f.s).pop();
+    if(bad)out.push('เลื่อนแล้วชน '+f.title.split(' ').slice(0,2).join(' ')+' '+hm(f.s)+' ("'+bad.title+'" จะจบ '+hm(bad.e)+')');
+  });
+  return out;
+}
+function shiftDay(di,delta){
+  const sh=store.get('shift'),n=nowMs();
+  if(delta===0){delete sh[di];store.set('shift',sh);return render()}
+  let d=sh[di];
+  if(!d){const rest=base.filter(x=>x.di===di&&!x.fixed&&x.e0>n);if(!rest.length)return;d={m:0,from:rest[0].s0}}
+  d.m=Math.max(-120,Math.min(240,d.m+delta));
+  if(d.m===0)delete sh[di];else sh[di]=d;
+  store.set('shift',sh);render();
+}
+function setDone(k,v){const dn=store.get('done');if(v)dn[k]=1;else delete dn[k];store.set('done',dn);render()}
+
+function card(x,ctx){
+  const {cur,nxt,n,dayLabel}=ctx;
+  const el=document.createElement('div');el.className='item'+(x===cur?' now':x===nxt?' next':(x.done||x.e<=n)?' past':'')+(x.done?' done':'');
+  const t=document.createElement('div');t.className='time';t.textContent=hm(x.s);
+  if(x.off){const o=document.createElement('span');o.className='shifted';o.textContent='เดิม '+x.t;t.appendChild(o)}
+  else if(x.fixed&&ctx.dayShifted){const o=document.createElement('span');o.className='fixed';o.textContent='ไม่เลื่อน';t.appendChild(o)}
+  const b=document.createElement('div');b.className='body';
+  if(dayLabel){const dl=document.createElement('span');dl.className='dayl';dl.textContent=TRIP[x.di].name;b.appendChild(dl)}
+  const ti=document.createElement('div');ti.style.fontWeight='600';ti.textContent=x.title;
+  if(x===cur||x===nxt){const bd=document.createElement('span');bd.className='badge';bd.textContent=x===cur?'ตอนนี้':'ถัดไป';ti.appendChild(bd)}
+  const how=document.createElement('div');how.className='how';how.textContent=x.how||'';
+  b.append(ti,how);
+  if(x.alert){const a=document.createElement('div');a.className='alert';a.textContent='⚠️ '+x.alert;b.appendChild(a)}
+  const dt=(window.DETAIL||{})[TRIP[x.di].date]?.[x.t];
+  if(dt){const de=document.createElement('details');de.open=openSet.has(x.k);de.ontoggle=()=>{de.open?openSet.add(x.k):openSet.delete(x.k)};const su=document.createElement('summary');su.textContent='รายละเอียดเต็มและแผนสำรอง';const dv=document.createElement('div');dv.textContent=dt;de.append(su,dv);b.appendChild(de)}
+  (x.zh||[]).forEach(([th,zh])=>{
+    const r=document.createElement('div');r.className='zh';
+    const tt=document.createElement('div');tt.className='t';
+    const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm,bb);
+    const sw=document.createElement('button');sw.type='button';sw.className='show';sw.textContent='โชว์';sw.onclick=()=>show(zh);
+    const bt=document.createElement('button');bt.type='button';bt.textContent='คัดลอก';bt.onclick=()=>copy(bt,zh,bb);
+    r.append(tt,sw,bt);b.appendChild(r);
+  });
+  const ck=document.createElement('label');ck.className='chk';const ci=document.createElement('input');ci.type='checkbox';ci.checked=x.done;ci.setAttribute('aria-label','ทำแล้ว: '+x.title);ci.onchange=()=>setDone(x.k,ci.checked);ck.appendChild(ci);
+  el.append(t,b,ck);
+  return el;
+}
+
 function render(){
   const n=nowMs(), c=cnTime(n);
-  const cur=all.find(x=>n>=x.s&&n<x.e), nxt=all.find(x=>x.s>n);
+  const list=build(), live=list.filter(x=>!x.done).sort((a,b)=>a.s-b.s);
+  const cur=live.find(x=>n>=x.s&&n<x.e), nxt=live.find(x=>x.s>n);
   $('clock').textContent='เวลาจีนตอนนี้ '+c.hm+' ('+c.date+')'+(fake?' · โหมดทดสอบ':'');
-  let st;
-  if(n<all[0].s) st='ยังไม่เริ่มทริป · รายการแรก: '+all[0].title;
+  const first=list[0];let st;
+  if(n<first.s) st='ยังไม่เริ่มทริป · รายการแรก: '+first.title;
   else if(!nxt&&!cur) st='จบทริปแล้ว';
-  else{const m=nxt?Math.round((nxt.s-n)/60000):0;
-    st=(cur?'ตอนนี้: '+cur.title:'ช่วงว่าง')+(nxt?' · ถัดไปอีก '+(m>=60?Math.floor(m/60)+' ชม. '+(m%60)+' นาที':m+' นาที'):'');}
+  else{const m=nxt?Math.round((nxt.s-n)/MIN):0;st=(cur?'ตอนนี้: '+cur.title:'ช่วงว่าง')+(nxt?' · ถัดไปอีก '+dur(m):'')}
   $('status').textContent=st;
-  const al=[cur,nxt].filter(x=>x&&x.alert).map(x=>'⚠️ '+x.alert);$('banner').hidden=!al.length;$('banner').textContent=al.join(' · ');
+  // นับถอยหลังรายการที่มี alert เมื่อเหลือไม่เกิน 60 นาที
+  const cd=live.filter(x=>x.alert&&x.s>n&&x.s-n<=60*MIN)[0];
+  $('count').hidden=!cd;
+  if(cd){const m=Math.ceil((cd.s-n)/MIN);$('count').textContent='⏱ อีก '+dur(m)+' · '+hm(cd.s)+' '+cd.title}
+  const al=[cur,nxt].filter(x=>x&&x.alert).map(x=>'⚠️ '+x.alert).concat(conflicts(list,n).map(t=>'🚨 '+t));
+  $('banner').hidden=!al.length;$('banner').textContent=al.join(' · ');
   const today=TRIP.findIndex(d=>d.date===c.date);
-  if(view===null) view=today>=0?today:(n<all[0].s?0:TRIP.length-1);
+  if(view===null) view=today>=0?today:(n<first.s?0:TRIP.length-1);
+  const term=$('q').value.trim().toLowerCase();$('qx').hidden=!term;
   const tabs=$('tabs');tabs.textContent='';
-  TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view)b.className='on';b.onclick=()=>{view=i;render();scrollTo(0,0)};tabs.appendChild(b)});
-  [['words.html','คำจีนทั้งหมด'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;tabs.appendChild(w)});
+  TRIP.forEach((d,i)=>{const b=document.createElement('button');b.type='button';b.textContent=d.name.split(' · ')[0]+(i===today?' (วันนี้)':'');if(i===view&&!term)b.className='on';b.onclick=()=>{view=i;$('q').value='';render();scrollTo(0,0)};tabs.appendChild(b)});
+  [['words.html','คำจีนทั้งหมด'],['help.html','🆘 ฉุกเฉิน'],['full.html','แผนฉบับเต็ม']].forEach(([h,t])=>{const w=document.createElement('a');w.href=h;w.textContent=t;tabs.appendChild(w)});
   const main=$('main');main.textContent='';
+  const sh=store.get('shift');
+  if(term){
+    const hit=list.filter(x=>[x.title,x.how||'',...(x.zh||[]).flat()].join(' ').toLowerCase().includes(term));
+    const h=document.createElement('h2');h.textContent='ผลค้นหา "'+$('q').value.trim()+'" '+hit.length+' รายการ';main.appendChild(h);
+    if(!hit.length){const e=document.createElement('div');e.className='empty';e.textContent='ไม่พบ ลองคำสั้นลง หรือดูหน้าคำจีนทั้งหมด';main.appendChild(e)}
+    hit.forEach(x=>main.appendChild(card(x,{cur,nxt,n,dayLabel:true,dayShifted:!!sh[x.di]})));
+    return;
+  }
   const h=document.createElement('h2');h.textContent=TRIP[view].name;main.appendChild(h);
+  const dayItems=list.filter(x=>x.di===view);
+  if(dayItems.some(x=>!x.fixed&&x.e0>n)||sh[view]){
+    const bar=document.createElement('div');bar.className='shiftbar';
+    const lab=document.createElement('span');const d=sh[view];
+    lab.innerHTML='';lab.append(d?'เลื่อนแล้ว ':'ช้า/เร็วกว่าแผน? ');
+    if(d){const bb=document.createElement('b');bb.textContent=(d.m>0?'+':'')+d.m+' นาที';lab.append(bb,' (ตั้งแต่ '+hm(d.from)+' · รถไฟ/เครื่องบินไม่เลื่อน)')}
+    const mk=(txt,fn)=>{const b=document.createElement('button');b.type='button';b.textContent=txt;b.onclick=fn;return b};
+    bar.append(mk('ช้ากว่าแผน +15 นาที',()=>shiftDay(view,15)),mk('−15 นาที',()=>shiftDay(view,-15)));
+    if(d)bar.append(mk('รีเซ็ต',()=>shiftDay(view,0)));
+    bar.append(lab);main.appendChild(bar);
+  }
   if(view===0&&window.TODO){const bx=document.createElement('div');bx.className='todo';const hh=document.createElement('div');hh.style.fontWeight='700';hh.textContent='ต้องทำก่อนขึ้นเครื่อง';bx.appendChild(hh);const st0=store.get('todo');TODO.forEach((t,i)=>{const l=document.createElement('label');const c=document.createElement('input');c.type='checkbox';c.id='todo'+i;c.checked=!!st0[i];c.onchange=()=>{const s1=store.get('todo');s1[i]=c.checked;store.set('todo',s1)};const sp=document.createElement('span');sp.textContent=t;l.append(c,sp);bx.appendChild(l)});main.appendChild(bx)}
-  all.filter(x=>x.di===view).forEach(x=>{
-    const el=document.createElement('div');el.className='item'+(x===cur?' now':x===nxt?' next':x.e<=n?' past':'');
-    const t=document.createElement('div');t.className='time';t.textContent=x.t;
-    const b=document.createElement('div');b.className='body';
-    const ti=document.createElement('div');ti.style.fontWeight='600';ti.textContent=x.title;
-    if(x===cur||x===nxt){const bd=document.createElement('span');bd.className='badge';bd.textContent=x===cur?'ตอนนี้':'ถัดไป';ti.appendChild(bd)}
-    const how=document.createElement('div');how.className='how';how.textContent=x.how||'';
-    b.append(ti,how);
-    if(x.alert){const a=document.createElement('div');a.className='alert';a.textContent='⚠️ '+x.alert;b.appendChild(a)}
-    const dt=(window.DETAIL||{})[TRIP[x.di].date]?.[x.t];
-    if(dt){const de=document.createElement('details');const key=TRIP[x.di].date+x.t;de.open=openSet.has(key);de.ontoggle=()=>{de.open?openSet.add(key):openSet.delete(key)};const su=document.createElement('summary');su.textContent='รายละเอียดเต็มและแผนสำรอง';const dv=document.createElement('div');dv.textContent=dt;de.append(su,dv);b.appendChild(de)}
-    (x.zh||[]).forEach(([th,zh])=>{
-      const r=document.createElement('div');r.className='zh';
-      const tt=document.createElement('div');tt.className='t';
-      const sm=document.createElement('small');sm.textContent=th;const bb=document.createElement('b');bb.textContent=zh;tt.append(sm,bb);
-      const bt=document.createElement('button');bt.type='button';bt.textContent='คัดลอก';bt.onclick=()=>copy(bt,zh,bb);
-      r.append(tt,bt);b.appendChild(r);
-    });
-    el.append(t,b);main.appendChild(el);
+  dayItems.forEach(x=>{
+    const el=card(x,{cur,nxt,n,dayShifted:!!sh[view]});main.appendChild(el);
     if(x===cur||(!cur&&x===nxt)) el.id='focus';
   });
 }
+$('q').addEventListener('input',render);
+$('qx').addEventListener('click',()=>{$('q').value='';render();$('q').focus()});
 render();
 const f=document.getElementById('focus');if(f)f.scrollIntoView({block:'center'});
-setInterval(render,30000);
+setInterval(render,15000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)render()});
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}
 </script>
