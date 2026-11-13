@@ -15,6 +15,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:16px
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 .wrap{max-width:720px;margin:0 auto;padding-block:16px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 h1{font-size:1.35rem;margin:0 0 4px;text-wrap:balance}
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin:0 0 8px;font-size:.92rem;white-space:pre-line}
 .sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding-block:8px;border-bottom:1px solid var(--line)}
 nav a.home{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
@@ -123,6 +124,36 @@ const D=[
 ["ของฝากเฉิงตูอยู่ตรงไหน","成都特产在哪里？"],
 ["บุฟเฟต์มื้อเย็น","众和道·熟成和牛海鲜自助(太古里店)"],
 ["Didi ไปสนามบิน","天府机场T1"]]],
+["ชานม / กาแฟ","drink",[
+["ค้นร้านชานมใกล้ๆ ใน Amap","奶茶"],
+["ค้นร้านกาแฟใกล้ๆ ใน Amap","咖啡"],
+["ร้านชานม Chagee (ค้นใน Amap)","霸王茶姬"],
+["ร้านชานม Heytea (ค้นใน Amap)","喜茶"],
+["ร้านชานม ChaPanda แบรนด์จากเฉิงตู (ค้นใน Amap)","茶百道"],
+["ร้านชานม Mixue (ค้นใน Amap)","蜜雪冰城"],
+["ร้านกาแฟ Luckin (ค้นใน Amap)","瑞幸咖啡"],
+["ร้านกาแฟ Starbucks (ค้นใน Amap)","星巴克"],
+["สแกนสั่งได้ไหม","可以扫码点单吗？"],
+["เอาอันนี้ 1 แก้ว (ชี้รูปเมนู)","我要这个，一杯"],
+["เอาอันนี้ 2 แก้ว","这个，两杯"],
+["สั่งครบในประโยคเดียว: 1 แก้ว หวาน 30% น้ำแข็งน้อย","一杯，三分糖，少冰"],
+["แก้วกลาง","中杯"],
+["แก้วใหญ่","大杯"],
+["หวาน 30%","三分糖"],
+["หวานครึ่งเดียว (50%)","半糖"],
+["ไม่ใส่น้ำตาล","不要糖"],
+["น้ำแข็งน้อย","少冰"],
+["ไม่ใส่น้ำแข็ง","去冰"],
+["ร้อน","热的"],
+["เพิ่มไข่มุก","加珍珠"],
+["อเมริกาโน่เย็น","冰美式"],
+["ลาเต้ร้อน","热拿铁"],
+["เปลี่ยนเป็นนมโอ๊ต","换燕麦奶"],
+["ใส่ถุงกลับ","打包带走"],
+["กินที่ร้าน","在这里喝"],
+["รับเองที่ร้าน (ปุ่มตอนสั่งในมินิโปรแกรม)","自提"],
+["นี่เลขคิวของฉัน","这是我的取餐号"]],
+"วิธีซื้อ\n1) สั่งที่เคาน์เตอร์ โชว์ประโยคด้านล่าง หรือสแกน QR ที่ร้านด้วย Alipay แล้วสั่งในมินิโปรแกรม (扫码点单)\n2) เลือกเมนู → ขนาด (杯) → ความหวาน (糖) → น้ำแข็ง (冰) → จ่าย\n3) ถ้าสั่งในมินิโปรแกรม เลือก 自提 (รับเองที่ร้าน) อย่ากด 外卖 (ส่งถึงที่)\n4) ได้เลขคิว 取餐号 รอดูจอหรือฟังเรียกเลข แล้วโชว์เลขในมือถือตอนรับ\nทริก: ชานมจีนปกติหวานมาก ถ้าไม่ชอบหวานสั่ง 三分糖 หรือ 半糖"],
 ["ใช้บ่อย","common",[
 ["ไม่เอาเผ็ด","不要辣"],
 ["จ่าย Alipay ได้ไหม","可以用支付宝吗？"],
@@ -133,10 +164,11 @@ const D=[
 ["เดิน (ปุ่มใน Amap)","步行"]]]
 ];
 const nav=document.getElementById('nav'),out=document.getElementById('out');
-D.forEach(([t,id,rows])=>{
+D.forEach(([t,id,rows,note])=>{
   const a=document.createElement('a');a.href='#'+id;a.textContent=t;nav.appendChild(a);
   const s=document.createElement('section');s.id=id;
   const h=document.createElement('h2');h.textContent=t;s.appendChild(h);
+  if(note){const n=document.createElement('p');n.className='note';n.textContent=note;s.appendChild(n)}
   const l=document.createElement('div');l.className='list';
   rows.forEach(([th,zh])=>{
     const r=document.createElement('div');r.className='row';
