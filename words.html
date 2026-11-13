@@ -17,6 +17,8 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 h1{font-size:1.35rem;margin:0 0 4px;text-wrap:balance}
 .sub{color:var(--muted);font-size:.9rem;margin:0 0 12px}
 nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);display:flex;gap:6px;overflow-x:auto;padding-block:8px;border-bottom:1px solid var(--line)}
+nav a.home{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
+.back{display:inline-block;margin-bottom:6px;color:var(--accent)}
 nav a{flex:none;text-decoration:none;color:var(--fg);border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.85rem}
 nav a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 section{margin-top:22px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 56px)}
@@ -36,9 +38,10 @@ html{margin:0}body{margin:0}[hidden]{display:none!important}
 </head>
 <body>
 <div class="wrap">
+<a class="back" href="index.html">← กลับแผนหลัก</a>
 <h1>คำจีนทริปเฉิงตู 13–19 พ.ย.</h1>
 <p class="sub">กด "คัดลอก" แล้วไปวางใน Didi, Amap หรือ Dianping ได้เลย · กด "โชว์" เพื่อขยายให้คนขับหรือพนักงานดู</p>
-<nav id="nav"></nav>
+<nav id="nav"><a class="home" href="index.html">← แผนหลัก</a></nav>
 <div id="out"></div>
 </div>
 <div class="big" id="big" hidden><p id="bigt"></p><button id="bigc" type="button">ปิด</button></div>
